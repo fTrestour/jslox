@@ -21,16 +21,32 @@ type TokenType =
   | "LESS"
   | "LESS_EQUAL"
   | "STAR"
+  | "AND"
+  | "CLASS"
+  | "ELSE"
+  | "FALSE"
+  | "FOR"
+  | "FUN"
+  | "IF"
+  | "NIL"
+  | "OR"
+  | "PRINT"
+  | "RETURN"
+  | "SUPER"
+  | "THIS"
+  | "TRUE"
+  | "VAR"
+  | "WHILE"
   | "EOF";
 
-interface Token {
+export interface Token {
   type: TokenType;
   value: string;
 }
 
 export function tokenize(code: string): Token[] {
   if (code.length === 0) {
-    return [];
+    return [{ type: "EOF", value: "" }];
   }
 
   const char = code.slice(0, 1);
@@ -134,10 +150,60 @@ export function tokenize(code: string): Token[] {
         let match = rest.match(/^[a-zA-Z0-9_]*/);
         if (match) {
           let identifier = char + match[0];
-          newToken = {
-            type: "IDENTIFIER",
-            value: identifier,
-          };
+
+          switch (identifier) {
+            case "and":
+              newToken = { type: "AND", value: identifier };
+              break;
+            case "class":
+              newToken = { type: "CLASS", value: identifier };
+              break;
+            case "else":
+              newToken = { type: "ELSE", value: identifier };
+              break;
+            case "false":
+              newToken = { type: "FALSE", value: identifier };
+              break;
+            case "for":
+              newToken = { type: "FOR", value: identifier };
+              break;
+            case "fun":
+              newToken = { type: "FUN", value: identifier };
+              break;
+            case "if":
+              newToken = { type: "IF", value: identifier };
+              break;
+            case "nil":
+              newToken = { type: "NIL", value: identifier };
+              break;
+            case "or":
+              newToken = { type: "OR", value: identifier };
+              break;
+            case "print":
+              newToken = { type: "PRINT", value: identifier };
+              break;
+            case "return":
+              newToken = { type: "RETURN", value: identifier };
+              break;
+            case "super":
+              newToken = { type: "SUPER", value: identifier };
+              break;
+            case "this":
+              newToken = { type: "THIS", value: identifier };
+              break;
+            case "true":
+              newToken = { type: "TRUE", value: identifier };
+              break;
+            case "var":
+              newToken = { type: "VAR", value: identifier };
+              break;
+            case "while":
+              newToken = { type: "WHILE", value: identifier };
+              break;
+            default:
+              newToken = { type: "IDENTIFIER", value: identifier };
+              break;
+          }
           rest = rest.slice(match[0].length);
         }
       } else {
