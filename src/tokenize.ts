@@ -120,8 +120,12 @@ export function tokenize(code: string): Token[] {
       break;
     case "/":
       if (rest[0] === "/") {
-        let endOfLine = rest.indexOf("\n");
-        rest = rest.slice(endOfLine);
+        const endOfLine = rest.indexOf("\n");
+        if (endOfLine === -1) {
+          rest = "";
+        } else {
+          rest = rest.slice(endOfLine + 1);
+        }
         newToken = null;
       } else {
         newToken = { type: "SLASH", value: char };
