@@ -9,7 +9,7 @@
     "typescript": "^5.0.0"
   },
   "scripts": {
-    "execute": "bun run src/cli.ts",
-    "dev": "bun run --watch src/cli.ts "
+    "exec": "bun run src/cli.ts",
+    "dev": "bun run --watch src/cli.ts"
   }
 }

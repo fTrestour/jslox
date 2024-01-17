@@ -1,39 +1,47 @@
-import { Token } from "./tokenize";
+import type { Token } from "./tokenize";
 
 export function parse(tokens: Token[]) {
-  const { ast, rest } = parseProgram(tokens);
+  const { ast } = parseProgram(tokens);
   return ast;
 }
 
+type ParseFunctionResult = {
+  ast: { type: string; [key: string]: any } | null;
+  rest: Token[];
+};
+
 // program        → declaration* EOF ;
-function parseProgram(tokens: Token[]) {
-  const { ast, rest } = parseDeclarations(tokens);
+function parseProgram(tokens: Token[]): ParseFunctionResult {
+  const { declarations, rest } = parseDeclarations(tokens);
 
   if (rest[0].type !== "EOF") throw new Error("Expected EOF");
 
-  return { ast, rest };
+  return { ast: { type: "PROGRAM" as const, declarations }, rest };
 }
 
 function parseDeclarations(tokens: Token[]) {
-  let ast: any;
   let rest = tokens;
 
-  let declarations = new Array<any>();
-  while (ast !== null) {
+  let declarations = new Array<ParseFunctionResult["ast"]>();
+  while (true) {
     const { ast: newAst, rest: newRest } = parseDeclaration(rest);
-    console.log(newAst);
+
+    if (newAst === null) {
+      break;
+    }
+
     declarations.push(newAst);
     rest = newRest;
   }
 
-  return { ast: declarations, rest };
+  return { declarations, rest };
 }
 
 // declaration    → classDecl
 //                | funDecl
 //                | varDecl
 //                | statement ;
-function parseDeclaration(tokens: Token[]) {
+function parseDeclaration(tokens: Token[]): ParseFunctionResult {
   const classAst = parseClassDeclaration(tokens);
   if (classAst.ast !== null) {
     return classAst;
@@ -54,7 +62,7 @@ function parseDeclaration(tokens: Token[]) {
 
 // classDecl      → "class" IDENTIFIER ( "<" IDENTIFIER )?
 //                  "{" function* "}" ;
-function parseClassDeclaration(tokens: Token[]) {
+function parseClassDeclaration(tokens: Token[]): ParseFunctionResult {
   let [classToken, name, ...rest] = tokens;
 
   if (classToken.type !== "CLASS") {
@@ -99,7 +107,7 @@ function parseClassDeclaration(tokens: Token[]) {
 }
 
 // funDecl        → "fun" function ;
-function parseFunctionDeclaration(tokens: Token[]) {
+function parseFunctionDeclaration(tokens: Token[]): ParseFunctionResult {
   if (tokens[0].type !== "FUN") {
     return { ast: null, rest: tokens };
   }
@@ -113,7 +121,7 @@ function parseFunctionDeclaration(tokens: Token[]) {
 }
 
 // varDecl        → "var" IDENTIFIER ( "=" expression )? ";" ;
-function parseVariableDeclaration(tokens: Token[]) {
+function parseVariableDeclaration(tokens: Token[]): ParseFunctionResult {
   let [varToken, identifier, ...rest] = tokens;
 
   if (varToken.type !== "VAR") {
@@ -152,7 +160,7 @@ function parseVariableDeclaration(tokens: Token[]) {
 //                | returnStmt
 //                | whileStmt
 //                | block ;
-function parseStatement(tokens: Token[]) {
+function parseStatement(tokens: Token[]): ParseFunctionResult {
   const expressionAst = parseExpressionStatement(tokens);
   if (expressionAst.ast !== null) {
     return expressionAst;
@@ -187,7 +195,7 @@ function parseStatement(tokens: Token[]) {
 }
 
 // exprStmt       → expression ";" ;
-function parseExpressionStatement(tokens: Token[]) {
+function parseExpressionStatement(tokens: Token[]): ParseFunctionResult {
   const { ast: expression, rest } = parseExpression(tokens);
 
   if (expression === null) {
@@ -200,14 +208,14 @@ function parseExpressionStatement(tokens: Token[]) {
 
   return {
     ast: { type: "EXPRESSION_STATEMENT" as const, expression },
-    rest: tokens.slice(1),
+    rest: rest.slice(1),
   };
 }
 
 // forStmt        → "for" "(" ( varDecl | exprStmt | ";" )
 //                            expression? ";"
 //                            expression? ")" statement ;
-function parseForStatement(tokens: Token[]) {
+function parseForStatement(tokens: Token[]): ParseFunctionResult {
   let [forToken, leftParen, ...rest] = tokens;
 
   if (forToken.type !== "FOR") {
@@ -218,7 +226,9 @@ function parseForStatement(tokens: Token[]) {
     throw new Error("Expected left paren");
   }
 
-  let initialisation;
+  let initialisation: ReturnType<
+    typeof parseVariableDeclaration | typeof parseExpressionStatement
+  >["ast"];
   const varDeclaration = parseVariableDeclaration(rest);
   const expressionStatement = parseExpressionStatement(rest);
   if (varDeclaration.ast !== null) {
@@ -272,7 +282,7 @@ function parseForStatement(tokens: Token[]) {
 
 // ifStmt         → "if" "(" expression ")" statement
 //                  ( "else" statement )? ;
-function parseIfStatement(tokens: Token[]) {
+function parseIfStatement(tokens: Token[]): ParseFunctionResult {
   if (tokens[0].type !== "IF") {
     return { ast: null, rest: tokens };
   }
@@ -319,7 +329,7 @@ function parseIfStatement(tokens: Token[]) {
 }
 
 // printStmt      → "print" expression ";" ;
-function parsePrintStatement(tokens: Token[]) {
+function parsePrintStatement(tokens: Token[]): ParseFunctionResult {
   if (tokens[0].type !== "PRINT") {
     return { ast: null, rest: tokens };
   }
@@ -340,7 +350,7 @@ function parsePrintStatement(tokens: Token[]) {
 }
 
 // returnStmt     → "return" expression? ";" ;
-function parseReturnStatement(tokens: Token[]) {
+function parseReturnStatement(tokens: Token[]): ParseFunctionResult {
   if (tokens[0].type !== "RETURN") {
     return { ast: null, rest: tokens };
   }
@@ -358,7 +368,7 @@ function parseReturnStatement(tokens: Token[]) {
 }
 
 // whileStmt      → "while" "(" expression ")" statement ;
-function parseWhileStatement(tokens: Token[]) {
+function parseWhileStatement(tokens: Token[]): ParseFunctionResult {
   if (tokens[0].type !== "WHILE") {
     return { ast: null, rest: tokens };
   }
@@ -389,12 +399,12 @@ function parseWhileStatement(tokens: Token[]) {
 }
 
 // block          → "{" declaration* "}" ;
-function parseBlock(tokens: Token[]) {
+function parseBlock(tokens: Token[]): ParseFunctionResult {
   if (tokens[0].type !== "LEFT_BRACE") {
     return { ast: null, rest: tokens };
   }
 
-  let { ast: declarations, rest } = parseDeclarations(tokens.slice(1));
+  let { declarations, rest } = parseDeclarations(tokens.slice(1));
 
   if (rest[0].type !== "RIGHT_BRACE") {
     throw new Error("Expected semicolon");
@@ -407,51 +417,56 @@ function parseBlock(tokens: Token[]) {
 }
 
 // expression     → assignment ;
-function parseExpression(tokens: Token[]) {
+function parseExpression(tokens: Token[]): ParseFunctionResult {
   return parseAssignment(tokens);
 }
 
 // assignment     → ( call "." )? IDENTIFIER "=" assignment
 //                | logic_or ;
-function parseAssignment(tokens: Token[]) {
-  let rest;
-  const { ast: call, rest: newRest } = parseCall(tokens);
-  rest = newRest;
+function parseAssignment(tokens: Token[]): ParseFunctionResult {
+  try {
+    let rest = tokens;
 
-  if (call !== null && rest[0].type !== "DOT") {
-    console.error(call);
-    console.error(rest);
-    throw new Error("Expected dot");
-  }
+    let { ast: call, rest: newRest } = parseCall(tokens);
 
-  if (rest[1].type !== "IDENTIFIER") {
-    throw new Error("Expected identifier");
-  }
-  let identifier = rest[1];
+    if (call !== null) {
+      if (rest[0].type !== "DOT") {
+        call = null;
+        rest = tokens;
+      } else {
+        rest = newRest.slice(1);
+      }
+    }
 
-  if (rest[2].type !== "EQUAL") {
-    throw new Error("Expected equal");
-  }
-  rest = rest.slice(3);
+    if (rest[0].type !== "IDENTIFIER") {
+      throw new Error("Expected identifier");
+    }
+    let identifier = rest[0];
 
-  const { ast: assignment, rest: newNewRest } = parseAssignment(rest);
-  rest = newNewRest;
+    if (rest[1].type !== "EQUAL") {
+      throw new Error("Expected equal");
+    }
+    rest = rest.slice(2);
 
-  if (assignment !== null) {
-    return {
-      ast: {
-        type: "ASSIGNMENT" as const,
-        data: { call, identifier, assignment },
-      },
-      rest,
-    };
-  }
+    const { ast: assignment, rest: newNewRest } = parseAssignment(rest);
+    rest = newNewRest;
+
+    if (assignment !== null) {
+      return {
+        ast: {
+          type: "ASSIGNMENT" as const,
+          data: { call, identifier, assignment },
+        },
+        rest,
+      };
+    }
+  } catch (e) {}
 
   return parseLogicOr(tokens);
 }
 
 // logic_or       → logic_and ( "or" logic_and )* ;
-function parseLogicOr(tokens: Token[]) {
+function parseLogicOr(tokens: Token[]): ParseFunctionResult {
   let result = parseLogicAnd(tokens) as any;
 
   while (result.rest[0].type === "OR") {
@@ -469,7 +484,7 @@ function parseLogicOr(tokens: Token[]) {
 }
 
 // logic_and      → equality ( "and" equality )* ;
-function parseLogicAnd(tokens: Token[]) {
+function parseLogicAnd(tokens: Token[]): ParseFunctionResult {
   let result = parseEquality(tokens) as any;
 
   while (result.rest[0].type === "AND") {
@@ -487,12 +502,12 @@ function parseLogicAnd(tokens: Token[]) {
 }
 
 // equality       → comparison ( ( "!=" | "==" ) comparison )* ;
-function parseEquality(tokens: Token[]) {
+function parseEquality(tokens: Token[]): ParseFunctionResult {
   let result = parseComparison(tokens) as any;
 
   while (
     result.rest[0].type === "BANG_EQUAL" ||
-    result.rest[0].type === "EQUAL"
+    result.rest[0].type === "EQUAL_EQUAL"
   ) {
     const { ast: comparison, rest: newNewRest } = parseComparison(
       result.rest.slice(1)
@@ -508,7 +523,7 @@ function parseEquality(tokens: Token[]) {
 }
 
 // comparison     → term ( ( ">" | ">=" | "<" | "<=" ) term )* ;
-function parseComparison(tokens: Token[]) {
+function parseComparison(tokens: Token[]): ParseFunctionResult {
   let result = parseTerm(tokens) as any;
 
   while (
@@ -529,7 +544,7 @@ function parseComparison(tokens: Token[]) {
 }
 
 // term           → factor ( ( "-" | "+" ) factor )* ;
-function parseTerm(tokens: Token[]) {
+function parseTerm(tokens: Token[]): ParseFunctionResult {
   let result = parseFactor(tokens) as any;
 
   while (result.rest[0].type === "MINUS" || result.rest[0].type === "PLUS") {
@@ -545,7 +560,7 @@ function parseTerm(tokens: Token[]) {
 }
 
 // factor         → unary ( ( "/" | "*" ) unary )* ;
-function parseFactor(tokens: Token[]) {
+function parseFactor(tokens: Token[]): ParseFunctionResult {
   let result = parseUnary(tokens) as any;
 
   while (result.rest[0].type === "SLASH" || result.rest[0].type === "STAR") {
@@ -561,7 +576,7 @@ function parseFactor(tokens: Token[]) {
 }
 
 // unary          → ( "!" | "-" ) unary | call ;
-function parseUnary(tokens: Token[]) {
+function parseUnary(tokens: Token[]): ParseFunctionResult {
   if (tokens[0].type === "BANG" || tokens[0].type === "MINUS") {
     const { ast: unary, rest } = parseUnary(tokens.slice(1));
 
@@ -575,8 +590,12 @@ function parseUnary(tokens: Token[]) {
 }
 
 // call           → primary ( "(" arguments? ")" | "." IDENTIFIER )* ;
-function parseCall(tokens: Token[]) {
-  let result = parsePrimary(tokens) as any;
+function parseCall(tokens: Token[]): ParseFunctionResult {
+  let result = parsePrimary(tokens);
+
+  if (result.ast === null) {
+    return { ast: null, rest: tokens };
+  }
 
   while (
     result.rest[0].type === "LEFT_PAREN" ||
@@ -621,7 +640,7 @@ function parseCall(tokens: Token[]) {
 // primary        → "true" | "false" | "nil" | "this"
 //                | NUMBER | STRING | IDENTIFIER | "(" expression ")"
 //                | "super" "." IDENTIFIER ;
-function parsePrimary(tokens: Token[]) {
+function parsePrimary(tokens: Token[]): ParseFunctionResult {
   switch (tokens[0].type) {
     case "TRUE":
       return { ast: { type: "TRUE" as const }, rest: tokens.slice(1) };
@@ -667,11 +686,13 @@ function parsePrimary(tokens: Token[]) {
         ast: { type: "SUPER" as const, propriety: tokens[2].value },
         rest: tokens.slice(3),
       };
+    default:
+      return { ast: null, rest: tokens };
   }
 }
 
 // function       → IDENTIFIER "(" parameters? ")" block ;
-function parseFunction(tokens: Token[]) {
+function parseFunction(tokens: Token[]): ParseFunctionResult {
   if (tokens[0].type !== "IDENTIFIER") {
     return { ast: null, rest: tokens };
   }
@@ -699,7 +720,7 @@ function parseFunction(tokens: Token[]) {
 }
 
 // parameters     → IDENTIFIER ( "," IDENTIFIER )* ;
-function parseParameters(tokens: Token[]) {
+function parseParameters(tokens: Token[]): ParseFunctionResult {
   if (tokens[0].type !== "IDENTIFIER") {
     return { ast: null, rest: tokens };
   }
@@ -721,8 +742,8 @@ function parseParameters(tokens: Token[]) {
 }
 
 // arguments      → expression ( "," expression )* ;
-function parseArguments(tokens: Token[]) {
-  let result = parseExpression(tokens) as any;
+function parseArguments(tokens: Token[]): ParseFunctionResult {
+  let result = parseExpression(tokens);
 
   while (result.rest[0].type === "COMMA") {
     const { ast: expression, rest: newNewRest } = parseExpression(
@@ -732,7 +753,12 @@ function parseArguments(tokens: Token[]) {
     result = {
       ast: {
         type: "ARGUMENTS" as const,
-        arguments: [...(result.ast.arguments ?? [result.ast]), expression],
+        arguments: [
+          ...(result.ast && "arguments" in result.ast
+            ? result.ast.arguments
+            : [result.ast]),
+          expression,
+        ],
       },
       rest: newNewRest,
     };

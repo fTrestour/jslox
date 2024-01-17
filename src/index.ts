@@ -5,8 +5,8 @@ export default function run(code: string) {
   console.log(code);
 
   const tokens = tokenize(code);
-  console.log({ tokens });
+  console.log(tokens);
 
   const ast = parse(tokens);
-  console.log({ ast });
+  console.log(ast);
 }
