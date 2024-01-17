@@ -34,9 +34,7 @@ export function tokenize(code: string): Token[] {
   }
 
   const char = code.slice(0, 1);
-  console.log({ char });
   let rest = code.slice(1).trim();
-  console.log({ rest });
 
   let newToken!: Token | null;
 
@@ -146,8 +144,6 @@ export function tokenize(code: string): Token[] {
         newToken = null;
       }
   }
-
-  console.log({ newToken });
 
   if (newToken === null) {
     return tokenize(rest);
