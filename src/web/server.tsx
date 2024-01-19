@@ -19,15 +19,13 @@ new Elysia()
     (req) => {
       const source = req.body.source;
       const tokens = tokenize(source);
-      const ast = parse(tokens);
 
       return (
         <App class="w-full flex flex-col">
           <Title />
-          <div class="flex flex-row">
-            <CodeInput class="w-1/3" source={source} />
-            <TokensViewer class="w-1/3" tokens={tokens} />
-            <AstViewer class="w-1/3" ast={ast} />
+          <div class="flex flex-col">
+            <CodeInput source={source} />
+            <TokensViewer class="w-full" source={source} tokens={tokens} />
           </div>
         </App>
       );

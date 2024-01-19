@@ -34,9 +34,28 @@ export function CodeInput(
 }
 
 export function TokensViewer(
-  props: PropsWithChildren<{ tokens: Token[]; class?: string }>
+  props: PropsWithChildren<{ source: string; tokens: Token[]; class?: string }>
 ) {
-  return <pre class={props.class}>{JSON.stringify(props.tokens, null, 2)}</pre>;
+  return (
+    <div class={props.class + " flex flex-col"}>
+      {props.tokens.map((token) => (
+        <TokenViewer
+          source={props.source.slice(token.startIndex, token.endIndex)}
+          token={token}
+        />
+      ))}
+    </div>
+  );
+}
+function TokenViewer(
+  props: PropsWithChildren<{ source: string; token: Token }>
+) {
+  return (
+    <div class="flex gap-5">
+      <pre>{props.source}</pre>
+      <div>{props.token.type}</div>
+    </div>
+  );
 }
 
 export function AstViewer(
