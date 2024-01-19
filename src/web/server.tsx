@@ -3,23 +3,39 @@ import { html } from "@elysiajs/html";
 import { tokenize } from "../domain/tokenize";
 import { parse } from "../domain/parse";
 import staticPlugin from "@elysiajs/static";
+import { App, AstViewer, CodeInput, Title, TokensViewer } from "./components";
 
 new Elysia()
   .use(html())
   .use(staticPlugin())
   .get("/", () => (
-    <html lang="en">
-      <head>
-        <title>JSLox</title>
-        <link href="./public/output.css" rel="stylesheet"></link>
-      </head>
-      <body>
-        <h1>JSLox</h1>
-        <form action="" method="post">
-          <textarea name="source"></textarea>
-          <button type="submit">Parse</button>
-        </form>
-      </body>
-    </html>
+    <App>
+      <Title />
+      <CodeInput />
+    </App>
   ))
+  .post(
+    "/",
+    (req) => {
+      const source = req.body.source;
+      const tokens = tokenize(source);
+      const ast = parse(tokens);
+
+      return (
+        <App class="w-full flex flex-col">
+          <Title />
+          <div class="flex flex-row">
+            <CodeInput class="w-1/3" source={source} />
+            <TokensViewer class="w-1/3" tokens={tokens} />
+            <AstViewer class="w-1/3" ast={ast} />
+          </div>
+        </App>
+      );
+    },
+    {
+      body: t.Object({
+        source: t.String(),
+      }),
+    }
+  )
   .listen(3000);

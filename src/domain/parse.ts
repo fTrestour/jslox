@@ -2,11 +2,16 @@ import type { Token } from "./tokenize";
 
 export function parse(tokens: Token[]) {
   const { ast } = parseProgram(tokens);
-  return ast;
+  return ast!;
 }
 
+export type Ast = {
+  type: string;
+  [key: string]: any;
+};
+
 type ParseFunctionResult = {
-  ast: { type: string; [key: string]: any } | null;
+  ast: Ast | null;
   rest: Token[];
 };
 
