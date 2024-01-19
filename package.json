@@ -10,8 +10,8 @@
   },
   "scripts": {
     "exec": "bun run src/cli.ts",
-    "build-tailwind": "bun tailwindcss -i ./src/input.css -o ./public/output.css --watch",
-    "dev": "bun run --watch src/server.tsx"
+    "build-tailwind": "bun tailwindcss -i ./src/web/input.css -o ./public/output.css --watch",
+    "dev": "bun run --watch src/web/server.tsx"
   },
   "dependencies": {
     "@elysiajs/html": "^0.8.0",

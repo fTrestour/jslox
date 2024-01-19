@@ -1,6 +1,6 @@
 import path from "path";
 
-import run from ".";
+import run from "./domain";
 
 const file = path.join(".", Bun.argv[2]);
 const code = await Bun.file(file).text();
