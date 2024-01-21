@@ -24,7 +24,7 @@ export function App(props: PropsWithChildren<{ class?: string }>) {
                 </button>
               </div>
             </header>
-            <main class="flex flex-1 overflow-hidden">{props.children}</main>
+            <main class="flex flex-1 overflow-clip">{props.children}</main>
           </div>
         </form>
       </body>
@@ -114,16 +114,15 @@ export function TokensViewer(
 function TokenViewer(
   props: PropsWithChildren<{ source: string; token: TokenWithId }>
 ) {
+  const { id, ...token } = props.token;
   return (
     <div
       class="border border-gray-700 p-4 rounded-md bg-gray-700 target:bg-gray-500"
-      id={props.token.id}
+      id={id}
     >
       <p class="font-mono">{props.source}</p>
       <p class="text-sm text-gray-400">Details</p>
-      <pre class="text-sm text-gray-400">
-        {JSON.stringify(props.token, null, 2)}
-      </pre>
+      <pre class="text-sm text-gray-400">{JSON.stringify(token, null, 2)}</pre>
     </div>
   );
 }
