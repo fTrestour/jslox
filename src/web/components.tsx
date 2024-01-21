@@ -1,6 +1,8 @@
 import type { PropsWithChildren } from "@kitajs/html";
 import type { Token } from "../domain/tokenize";
 
+type TokenWithId = Token & { id: string };
+
 export function App(props: PropsWithChildren<{ class?: string }>) {
   return (
     <html lang="en">
@@ -48,48 +50,57 @@ export function CodeInput(
 }
 
 export function CodeViewer(
-  props: PropsWithChildren<{ source: string; tokens: Token[]; class?: string }>
+  props: PropsWithChildren<{
+    source: string;
+    tokens: TokenWithId[];
+    class?: string;
+  }>
 ) {
-  const breakpoints = props.tokens.reduce(
-    (acc, token) => [...acc, token.startIndex, token.endIndex],
-    new Array<number>()
-  );
-
-  let previousBreakpoint: number | null = null;
-  let spans = new Array<string>();
-  for (const breakpoint of breakpoints) {
-    if (previousBreakpoint === null) {
-      previousBreakpoint = breakpoint;
-      continue;
-    } else {
-      spans.push(props.source.slice(previousBreakpoint, breakpoint));
-      previousBreakpoint = breakpoint;
-    }
+  let previousBreakpoint = 0;
+  let spans = new Array<{ value: string; tokenId: string | null }>();
+  for (const token of props.tokens) {
+    spans.push({
+      value: props.source.slice(previousBreakpoint, token.startIndex),
+      tokenId: null,
+    });
+    spans.push({
+      value: props.source.slice(token.startIndex, token.endIndex),
+      tokenId: token.id,
+    });
+    previousBreakpoint = token.endIndex;
   }
 
   return (
     <div class={props.class + " p-6"}>
       <h2 class="text-lg font-semibold mb-4">Input Code</h2>
       <pre class="w-full rounded-md border px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 min-h-[500px] bg-gray-700 text-white border-gray-600">
-        {spans.map((span) => (
-          <span class="hover:bg-gray-600 hover:border-gray-600 rounded-md border-4 border-transparent">
-            {span}
-          </span>
-        ))}
+        {spans.map((span) =>
+          span.tokenId !== null ? (
+            <a href={`#${span.tokenId}`}>
+              <span class="hover:bg-gray-600 hover:border-gray-600 rounded-md border-4 border-transparent">
+                {span.value}
+              </span>
+            </a>
+          ) : (
+            <span>{span.value}</span>
+          )
+        )}
       </pre>
     </div>
   );
 }
 
 export function TokensViewer(
-  props: PropsWithChildren<{ source: string; tokens: Token[]; class?: string }>
+  props: PropsWithChildren<{
+    source: string;
+    tokens: TokenWithId[];
+    class?: string;
+  }>
 ) {
   return (
-    <div class={props.class + " p-6 pt-0"}>
-      <h2 class="text-lg font-semibold pb-4 pt-6 sticky top-0 bg-gray-800">
-        Tokens
-      </h2>
-      <div class="flex flex-col space-y-4">
+    <div class={props.class + " py-6"}>
+      <h2 class="text-lg font-semibold pb-4 px-6">Tokens</h2>
+      <div class="flex flex-col space-y-4 px-6 h-full overflow-auto">
         {props.tokens.map((token) => (
           <TokenViewer
             source={props.source.slice(token.startIndex, token.endIndex)}
@@ -101,12 +112,12 @@ export function TokensViewer(
   );
 }
 function TokenViewer(
-  props: PropsWithChildren<{ source: string; token: Token }>
+  props: PropsWithChildren<{ source: string; token: TokenWithId }>
 ) {
   return (
     <div
-      class="border border-gray-700 p-4 rounded-md bg-gray-700"
-      id={props.token.startIndex}
+      class="border border-gray-700 p-4 rounded-md bg-gray-700 target:bg-gray-500"
+      id={props.token.id}
     >
       <p class="font-mono">{props.source}</p>
       <p class="text-sm text-gray-400">Details</p>

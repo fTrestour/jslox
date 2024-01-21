@@ -3,6 +3,7 @@ import { html } from "@elysiajs/html";
 import { tokenize } from "../domain/tokenize";
 import staticPlugin from "@elysiajs/static";
 import { App, CodeInput, CodeViewer, TokensViewer } from "./components";
+import { randomUUID } from "crypto";
 
 new Elysia()
   .use(html())
@@ -16,7 +17,10 @@ new Elysia()
     "/",
     (req) => {
       const source = req.body.source;
-      const tokens = tokenize(source);
+      const tokens = tokenize(source).map((token) => ({
+        ...token,
+        id: randomUUID(),
+      }));
 
       return (
         <App>
@@ -25,11 +29,7 @@ new Elysia()
             source={source}
             tokens={tokens}
           />
-          <TokensViewer
-            class="w-1/2 overflow-auto"
-            source={source}
-            tokens={tokens}
-          />
+          <TokensViewer class="w-1/2" source={source} tokens={tokens} />
         </App>
       );
     },
