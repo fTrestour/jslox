@@ -1,6 +1,5 @@
 import type { PropsWithChildren } from "@kitajs/html";
 import type { Token } from "../domain/tokenize";
-import type { Ast } from "../domain/parse";
 
 export function App(props: PropsWithChildren<{ class?: string }>) {
   return (
@@ -9,27 +8,42 @@ export function App(props: PropsWithChildren<{ class?: string }>) {
         <title>JSLox</title>
         <link href="./public/output.css" rel="stylesheet"></link>
       </head>
-      <body class={props.class}>{props.children}</body>
+      <body class="">
+        <form action="" method="post">
+          <div class="flex flex-col h-screen bg-gray-800 text-white">
+            <header class="flex items-center justify-between px-6 py-4 border-b border-gray-700">
+              <h1 class="text-2xl font-bold">JSLox</h1>
+              <div class="flex items-center gap-4">
+                <button
+                  type="submit"
+                  class="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border bg-background hover:bg-accent hover:text-accent-foreground h-10 px-4 py-2 text-white border-white"
+                >
+                  Show Tokens
+                </button>
+              </div>
+            </header>
+            <main class="flex flex-1 overflow-hidden">{props.children}</main>
+          </div>
+        </form>
+      </body>
     </html>
   );
-}
-
-export function Title() {
-  return <h1 class="text-3xl">JSLox</h1>;
 }
 
 export function CodeInput(
   props: PropsWithChildren<{ source?: string; class?: string }>
 ) {
   return (
-    <form class={props.class + " flex flex-col h-full"} action="" method="post">
-      <textarea class="h-96" name="source">
+    <div class={props.class + " p-6"}>
+      <h2 class="text-lg font-semibold mb-4">Input Code</h2>
+      <textarea
+        class="flex w-full rounded-md border px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 min-h-[500px] bg-gray-700 text-white border-gray-600"
+        placeholder="Enter your code here..."
+        name="source"
+      >
         {props.source}
       </textarea>
-      <button class="h-10" type="submit">
-        Parse
-      </button>
-    </form>
+    </div>
   );
 }
 
@@ -37,13 +51,16 @@ export function TokensViewer(
   props: PropsWithChildren<{ source: string; tokens: Token[]; class?: string }>
 ) {
   return (
-    <div class={props.class + " flex flex-col"}>
-      {props.tokens.map((token) => (
-        <TokenViewer
-          source={props.source.slice(token.startIndex, token.endIndex)}
-          token={token}
-        />
-      ))}
+    <div class={props.class + " p-6"}>
+      <h2 class="text-lg font-semibold mb-4">Tokens</h2>
+      <div class="flex flex-col space-y-4">
+        {props.tokens.map((token) => (
+          <TokenViewer
+            source={props.source.slice(token.startIndex, token.endIndex)}
+            token={token}
+          />
+        ))}
+      </div>
     </div>
   );
 }
@@ -51,15 +68,12 @@ function TokenViewer(
   props: PropsWithChildren<{ source: string; token: Token }>
 ) {
   return (
-    <div class="flex gap-5">
-      <pre>{props.source}</pre>
-      <div>{props.token.type}</div>
+    <div class="border border-gray-700 p-4 rounded-md bg-gray-700">
+      <p class="font-mono">{props.source}</p>
+      <p class="text-sm text-gray-400">Details</p>
+      <pre class="text-sm text-gray-400">
+        {JSON.stringify(props.token, null, 2)}
+      </pre>
     </div>
   );
-}
-
-export function AstViewer(
-  props: PropsWithChildren<{ ast: Ast; class?: string }>
-) {
-  return <pre class={props.class}>{JSON.stringify(props.ast, null, 2)}</pre>;
 }

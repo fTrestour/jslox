@@ -1,17 +1,15 @@
 import { Elysia, t } from "elysia";
 import { html } from "@elysiajs/html";
 import { tokenize } from "../domain/tokenize";
-import { parse } from "../domain/parse";
 import staticPlugin from "@elysiajs/static";
-import { App, AstViewer, CodeInput, Title, TokensViewer } from "./components";
+import { App, CodeInput, TokensViewer } from "./components";
 
 new Elysia()
   .use(html())
   .use(staticPlugin())
   .get("/", () => (
     <App>
-      <Title />
-      <CodeInput />
+      <CodeInput class="w-full" />
     </App>
   ))
   .post(
@@ -21,12 +19,13 @@ new Elysia()
       const tokens = tokenize(source);
 
       return (
-        <App class="w-full flex flex-col">
-          <Title />
-          <div class="flex flex-col">
-            <CodeInput source={source} />
-            <TokensViewer class="w-full" source={source} tokens={tokens} />
-          </div>
+        <App>
+          <CodeInput class="w-1/2 border-r border-gray-700" source={source} />
+          <TokensViewer
+            class="w-1/2 overflow-auto"
+            source={source}
+            tokens={tokens}
+          />
         </App>
       );
     },
