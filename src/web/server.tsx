@@ -2,7 +2,7 @@ import { Elysia, t } from "elysia";
 import { html } from "@elysiajs/html";
 import { tokenize } from "../domain/tokenize";
 import staticPlugin from "@elysiajs/static";
-import { App, CodeInput, TokensViewer } from "./components";
+import { App, CodeInput, CodeViewer, TokensViewer } from "./components";
 
 new Elysia()
   .use(html())
@@ -20,7 +20,11 @@ new Elysia()
 
       return (
         <App>
-          <CodeInput class="w-1/2 border-r border-gray-700" source={source} />
+          <CodeViewer
+            class="w-1/2 border-r border-gray-700"
+            source={source}
+            tokens={tokens}
+          />
           <TokensViewer
             class="w-1/2 overflow-auto"
             source={source}

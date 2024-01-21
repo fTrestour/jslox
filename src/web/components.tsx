@@ -47,12 +47,48 @@ export function CodeInput(
   );
 }
 
+export function CodeViewer(
+  props: PropsWithChildren<{ source: string; tokens: Token[]; class?: string }>
+) {
+  const breakpoints = props.tokens.reduce(
+    (acc, token) => [...acc, token.startIndex, token.endIndex],
+    new Array<number>()
+  );
+
+  let previousBreakpoint: number | null = null;
+  let spans = new Array<string>();
+  for (const breakpoint of breakpoints) {
+    if (previousBreakpoint === null) {
+      previousBreakpoint = breakpoint;
+      continue;
+    } else {
+      spans.push(props.source.slice(previousBreakpoint, breakpoint));
+      previousBreakpoint = breakpoint;
+    }
+  }
+
+  return (
+    <div class={props.class + " p-6"}>
+      <h2 class="text-lg font-semibold mb-4">Input Code</h2>
+      <pre class="w-full rounded-md border px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 min-h-[500px] bg-gray-700 text-white border-gray-600">
+        {spans.map((span) => (
+          <span class="hover:bg-gray-600 hover:border-gray-600 rounded-md border-4 border-transparent">
+            {span}
+          </span>
+        ))}
+      </pre>
+    </div>
+  );
+}
+
 export function TokensViewer(
   props: PropsWithChildren<{ source: string; tokens: Token[]; class?: string }>
 ) {
   return (
-    <div class={props.class + " p-6"}>
-      <h2 class="text-lg font-semibold mb-4">Tokens</h2>
+    <div class={props.class + " p-6 pt-0"}>
+      <h2 class="text-lg font-semibold pb-4 pt-6 sticky top-0 bg-gray-800">
+        Tokens
+      </h2>
       <div class="flex flex-col space-y-4">
         {props.tokens.map((token) => (
           <TokenViewer
@@ -68,7 +104,10 @@ function TokenViewer(
   props: PropsWithChildren<{ source: string; token: Token }>
 ) {
   return (
-    <div class="border border-gray-700 p-4 rounded-md bg-gray-700">
+    <div
+      class="border border-gray-700 p-4 rounded-md bg-gray-700"
+      id={props.token.startIndex}
+    >
       <p class="font-mono">{props.source}</p>
       <p class="text-sm text-gray-400">Details</p>
       <pre class="text-sm text-gray-400">
