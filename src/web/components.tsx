@@ -7,26 +7,16 @@ export function App(props: PropsWithChildren<{ class?: string }>) {
   return (
     <html lang="en">
       <head>
-        <title>JSLox</title>
+        <title>Lox analyzer</title>
         <link href="./public/output.css" rel="stylesheet"></link>
       </head>
       <body class="">
-        <form action="" method="post">
-          <div class="flex flex-col h-screen bg-gray-800 text-white">
-            <header class="flex items-center justify-between px-6 py-4 border-b border-gray-700">
-              <h1 class="text-2xl font-bold">JSLox</h1>
-              <div class="flex items-center gap-4">
-                <button
-                  type="submit"
-                  class="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border bg-background hover:bg-accent hover:text-accent-foreground h-10 px-4 py-2 text-white border-white"
-                >
-                  Show Tokens
-                </button>
-              </div>
-            </header>
-            <main class="flex flex-1 overflow-clip">{props.children}</main>
-          </div>
-        </form>
+        <div class="flex flex-col h-screen bg-gray-800 text-white">
+          <header class="flex items-center justify-between px-6 py-4 border-b border-gray-700">
+            <h1 class="text-2xl font-bold">Lox analyzer</h1>
+          </header>
+          <main class="flex flex-1 overflow-clip">{props.children}</main>
+        </div>
       </body>
     </html>
   );
@@ -36,15 +26,23 @@ export function CodeInput(
   props: PropsWithChildren<{ source?: string; class?: string }>
 ) {
   return (
-    <div class={props.class + " p-6"}>
+    <div class={props.class + " p-6 flex flex-col"}>
       <h2 class="text-lg font-semibold mb-4">Input Code</h2>
-      <textarea
-        class="flex w-full rounded-md border px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 min-h-[500px] bg-gray-700 text-white border-gray-600"
-        placeholder="Enter your code here..."
-        name="source"
-      >
-        {props.source}
-      </textarea>
+      <form class="flex-grow flex flex-col" action="" method="post">
+        <textarea
+          class="flex-grow w-full rounded-md border px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 min-h-[500px] bg-gray-700 text-white border-gray-600 font-mono"
+          placeholder="Enter your code here..."
+          name="source"
+        >
+          {props.source}
+        </textarea>
+        <button
+          type="submit"
+          class="mt-6 inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border bg-background hover:bg-accent hover:text-accent-foreground h-10 px-4 py-2 text-white border-white w-fit"
+        >
+          Analyze
+        </button>
+      </form>
     </div>
   );
 }
@@ -71,9 +69,9 @@ export function CodeViewer(
   }
 
   return (
-    <div class={props.class + " p-6"}>
+    <div class={props.class + " p-6 flex flex-col"}>
       <h2 class="text-lg font-semibold mb-4">Input Code</h2>
-      <pre class="w-full rounded-md border px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 min-h-[500px] bg-gray-700 text-white border-gray-600">
+      <pre class="flex-grow w-full rounded-md border px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 min-h-[500px] bg-gray-700 text-white border-gray-600">
         {spans.map((span) =>
           span.tokenId !== null ? (
             <a href={`#${span.tokenId}`}>
@@ -98,9 +96,9 @@ export function TokensViewer(
   }>
 ) {
   return (
-    <div class={props.class + " py-6"}>
+    <div class={props.class + " py-6 flex flex-col"}>
       <h2 class="text-lg font-semibold pb-4 px-6">Tokens</h2>
-      <div class="flex flex-col space-y-4 px-6 h-full overflow-auto">
+      <div class="flex-grow flex flex-col space-y-4 px-6 overflow-auto">
         {props.tokens.map((token) => (
           <TokenViewer
             source={props.source.slice(token.startIndex, token.endIndex)}
