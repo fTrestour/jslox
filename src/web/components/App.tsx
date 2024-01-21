@@ -6,6 +6,7 @@ export function App(props: PropsWithChildren<{ class?: string }>) {
       <head>
         <title>Lox analyzer</title>
         <link href="./public/output.css" rel="stylesheet"></link>
+        <link rel="icon" type="image/x-icon" href="./public/favicon.ico"></link>
       </head>
       <body class="">
         <div class="flex flex-col h-screen bg-background text-yellow p-8">
