@@ -9,7 +9,7 @@ export function TokenViewer(
     <div
       class={
         codeCss +
-        " target:border-yellow border-4 border-transparent text-light text-sm flex flex-row gap-4"
+        " target:border-yellow border-2 border-transparent text-light text-sm flex flex-row gap-4"
       }
       id={id}
     >
