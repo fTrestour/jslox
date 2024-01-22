@@ -2,6 +2,7 @@ import type { PropsWithChildren } from "@kitajs/html";
 
 import { TokenViewer } from "./TokenViewer";
 import type { TokenWithId } from "./utils";
+import { Button } from "./Button";
 
 export function TokensViewer(
   props: PropsWithChildren<{
@@ -21,6 +22,13 @@ export function TokensViewer(
           />
         ))}
       </div>
+      <form
+        method="POST"
+        action="/parsed"
+        class=" mt-6 w-full flex justify-end"
+      >
+        <Button direction="forward">Parse</Button>
+      </form>
     </div>
   );
 }
