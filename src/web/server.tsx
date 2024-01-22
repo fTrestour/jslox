@@ -17,7 +17,7 @@ new Elysia()
     </App>
   ))
   .post(
-    "/",
+    "/tokenized",
     (req) => {
       const source = req.body.source;
       const tokens = tokenize(source).map((token) => ({
