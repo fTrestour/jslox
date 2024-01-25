@@ -11,11 +11,28 @@ import { randomUUID } from "crypto";
 new Elysia()
   .use(html())
   .use(staticPlugin())
-  .get("/", () => (
-    <App>
-      <CodeInput class="w-full" />
-    </App>
-  ))
+  .get(
+    "/",
+    (req) => {
+      const source =
+        req.query.source ??
+        `
+// A function that prints hello world
+fun sayHello() {
+  print "hello world";
+}
+
+sayHello();
+      `;
+
+      return (
+        <App>
+          <CodeInput class="w-full" source={source} />
+        </App>
+      );
+    },
+    { query: t.Object({ source: t.Optional(t.String()) }) }
+  )
   .post(
     "/tokenized",
     (req) => {

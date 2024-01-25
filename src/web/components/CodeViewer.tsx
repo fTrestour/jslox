@@ -26,7 +26,7 @@ export function CodeViewer(
   return (
     <div class={props.class + " flex flex-col"}>
       <h2 class="text-lg font-semibold mb-4">Input Code</h2>
-      <pre class={codeCss + " flex-grow w-full"}>
+      <pre class={codeCss + " flex-grow w-full overflow-auto"}>
         {spans.map((span) =>
           span.tokenId !== null ? (
             <a href={`#${span.tokenId}`}>
@@ -39,7 +39,11 @@ export function CodeViewer(
           )
         )}
       </pre>
-      <Link direction="backward" href="/" class="mt-6">
+      <Link
+        direction="backward"
+        href={`/?source=${encodeURIComponent(props.source)}`}
+        class="mt-6"
+      >
         Back
       </Link>
     </div>
