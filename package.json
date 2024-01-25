@@ -14,7 +14,8 @@
     "build-tailwind": "bun tailwindcss -i ./src/web/input.css -o ./public/output.css --watch",
     "dev": "bun run --watch src/web/server.tsx",
     "prestart": "bun tailwindcss -i ./src/web/input.css -o ./public/output.css",
-    "start": "bun run src/web/server.tsx"
+    "start": "bun run src/web/server.tsx",
+    "deploy": "fly deploy"
   },
   "dependencies": {
     "@elysiajs/html": "^0.8.0",
