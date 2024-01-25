@@ -1,5 +1,6 @@
 {
   "devDependencies": {
+    "@flydotio/dockerfile": "latest",
     "@types/bun": "latest",
     "@types/node": "^20.11.5"
   },
@@ -11,7 +12,9 @@
   "scripts": {
     "exec": "bun run src/cli.ts",
     "build-tailwind": "bun tailwindcss -i ./src/web/input.css -o ./public/output.css --watch",
-    "dev": "bun run --watch src/web/server.tsx"
+    "dev": "bun run --watch src/web/server.tsx",
+    "prestart": "bun tailwindcss -i ./src/web/input.css -o ./public/output.css",
+    "start": "bun run src/web/server.tsx"
   },
   "dependencies": {
     "@elysiajs/html": "^0.8.0",
