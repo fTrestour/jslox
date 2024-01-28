@@ -5,6 +5,8 @@ export function App(props: PropsWithChildren<{ class?: string }>) {
     <html lang="en">
       <head>
         <title>Lox analyzer</title>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <link href="./public/output.css" rel="stylesheet"></link>
         <link rel="icon" type="image/x-icon" href="./public/favicon.ico"></link>
       </head>
