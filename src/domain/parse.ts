@@ -5,23 +5,27 @@ export function parse(tokens: Token[]) {
   return ast!;
 }
 
-export type Ast = {
+export type Ast<T extends Token = Token> = {
   type: string;
+  token: T;
   [key: string]: any;
 };
 
-type ParseFunctionResult = {
-  ast: Ast | null;
+type ParseFunctionResult<T extends Token = Token> = {
+  ast: Ast<T> | null;
   rest: Token[];
 };
 
 // program        → declaration* EOF ;
-function parseProgram(tokens: Token[]): ParseFunctionResult {
+function parseProgram<T extends Token>(tokens: T[]): ParseFunctionResult<T> {
   const { declarations, rest } = parseDeclarations(tokens);
 
   if (rest[0].type !== "EOF") throw new Error("Expected EOF");
 
-  return { ast: { type: "PROGRAM" as const, declarations }, rest };
+  return {
+    ast: { type: "PROGRAM" as const, token: tokens[0], declarations },
+    rest,
+  };
 }
 
 function parseDeclarations(tokens: Token[]) {
@@ -105,6 +109,7 @@ function parseClassDeclaration(tokens: Token[]): ParseFunctionResult {
   return {
     ast: {
       type: "CLASS_DECLARATION" as const,
+      token: classToken,
       data: { name, inheritance, functions },
     },
     rest,
@@ -120,7 +125,11 @@ function parseFunctionDeclaration(tokens: Token[]): ParseFunctionResult {
   const { ast: functionAst, rest } = parseFunction(tokens.slice(1));
 
   return {
-    ast: { type: "FUNCTION_DECLARATION" as const, function: functionAst },
+    ast: {
+      type: "FUNCTION_DECLARATION" as const,
+      token: tokens[0],
+      function: functionAst,
+    },
     rest,
   };
 }
@@ -152,6 +161,7 @@ function parseVariableDeclaration(tokens: Token[]): ParseFunctionResult {
   return {
     ast: {
       type: "VARIABLE_DECLARATION" as const,
+      token: varToken,
       data: { identifier, expression },
     },
     rest,
@@ -212,7 +222,11 @@ function parseExpressionStatement(tokens: Token[]): ParseFunctionResult {
   }
 
   return {
-    ast: { type: "EXPRESSION_STATEMENT" as const, expression },
+    ast: {
+      type: "EXPRESSION_STATEMENT" as const,
+      token: tokens[0],
+      expression,
+    },
     rest: rest.slice(1),
   };
 }
@@ -272,6 +286,7 @@ function parseForStatement(tokens: Token[]): ParseFunctionResult {
   return {
     ast: {
       type: "BLOCK" as const,
+      token: forToken,
       declarations: [
         initialisation,
         {
@@ -325,6 +340,7 @@ function parseIfStatement(tokens: Token[]): ParseFunctionResult {
   return {
     ast: {
       type: "IF_STATEMENT" as const,
+      token: tokens[0],
       condition,
       thenStatement,
       elseStatement,
@@ -349,7 +365,7 @@ function parsePrintStatement(tokens: Token[]): ParseFunctionResult {
   }
 
   return {
-    ast: { type: "PRINT_STATEMENT" as const, expression },
+    ast: { type: "PRINT_STATEMENT" as const, token: tokens[0], expression },
     rest: rest.slice(1),
   };
 }
@@ -367,7 +383,7 @@ function parseReturnStatement(tokens: Token[]): ParseFunctionResult {
   }
 
   return {
-    ast: { type: "RETURN_STATEMENT" as const, expression },
+    ast: { type: "RETURN_STATEMENT" as const, token: tokens[0], expression },
     rest: rest.slice(1),
   };
 }
@@ -396,6 +412,7 @@ function parseWhileStatement(tokens: Token[]): ParseFunctionResult {
   return {
     ast: {
       type: "WHILE_STATEMENT" as const,
+      token: tokens[0],
       condition,
       body,
     },
@@ -416,7 +433,7 @@ function parseBlock(tokens: Token[]): ParseFunctionResult {
   }
 
   return {
-    ast: { type: "BLOCK" as const, declarations },
+    ast: { type: "BLOCK" as const, token: tokens[0], declarations },
     rest: rest.slice(1),
   };
 }
@@ -460,6 +477,7 @@ function parseAssignment(tokens: Token[]): ParseFunctionResult {
       return {
         ast: {
           type: "ASSIGNMENT" as const,
+          token: tokens[0],
           data: { call, identifier, assignment },
         },
         rest,
@@ -586,7 +604,7 @@ function parseUnary(tokens: Token[]): ParseFunctionResult {
     const { ast: unary, rest } = parseUnary(tokens.slice(1));
 
     return {
-      ast: { type: tokens[0].type, unary },
+      ast: { type: tokens[0].type, token: tokens[0], unary },
       rest,
     };
   }
@@ -618,6 +636,7 @@ function parseCall(tokens: Token[]): ParseFunctionResult {
       result = {
         ast: {
           type: "CALL" as const,
+          token: result.rest[0],
           callee: result.ast,
           arguments: argumentsAst,
         },
@@ -631,6 +650,7 @@ function parseCall(tokens: Token[]): ParseFunctionResult {
       result = {
         ast: {
           type: "ACCESS" as const,
+          token: result.rest[0],
           object: result.ast,
           propriety: result.rest[1],
         },
@@ -648,26 +668,50 @@ function parseCall(tokens: Token[]): ParseFunctionResult {
 function parsePrimary(tokens: Token[]): ParseFunctionResult {
   switch (tokens[0].type) {
     case "TRUE":
-      return { ast: { type: "TRUE" as const }, rest: tokens.slice(1) };
+      return {
+        ast: { type: "TRUE" as const, token: tokens[0] },
+        rest: tokens.slice(1),
+      };
     case "FALSE":
-      return { ast: { type: "FALSE" as const }, rest: tokens.slice(1) };
+      return {
+        ast: { type: "FALSE" as const, token: tokens[0] },
+        rest: tokens.slice(1),
+      };
     case "NIL":
-      return { ast: { type: "NIL" as const }, rest: tokens.slice(1) };
+      return {
+        ast: { type: "NIL" as const, token: tokens[0] },
+        rest: tokens.slice(1),
+      };
     case "THIS":
-      return { ast: { type: "THIS" as const }, rest: tokens.slice(1) };
+      return {
+        ast: { type: "THIS" as const, token: tokens[0] },
+        rest: tokens.slice(1),
+      };
     case "NUMBER":
       return {
-        ast: { type: "NUMBER" as const, value: tokens[0].value },
+        ast: {
+          type: "NUMBER" as const,
+          value: tokens[0].value,
+          token: tokens[0],
+        },
         rest: tokens.slice(1),
       };
     case "STRING":
       return {
-        ast: { type: "STRING" as const, value: tokens[0].value },
+        ast: {
+          type: "STRING" as const,
+          value: tokens[0].value,
+          token: tokens[0],
+        },
         rest: tokens.slice(1),
       };
     case "IDENTIFIER":
       return {
-        ast: { type: "IDENTIFIER" as const, value: tokens[0].value },
+        ast: {
+          type: "IDENTIFIER" as const,
+          value: tokens[0].value,
+          token: tokens[0],
+        },
         rest: tokens.slice(1),
       };
     case "LEFT_PAREN":
@@ -688,7 +732,11 @@ function parsePrimary(tokens: Token[]): ParseFunctionResult {
       }
 
       return {
-        ast: { type: "SUPER" as const, propriety: tokens[2].value },
+        ast: {
+          type: "SUPER" as const,
+          token: tokens[0],
+          propriety: tokens[2].value,
+        },
         rest: tokens.slice(3),
       };
     default:
@@ -717,6 +765,7 @@ function parseFunction(tokens: Token[]): ParseFunctionResult {
   return {
     ast: {
       type: "FUNCTION" as const,
+      token: tokens[0],
       name: tokens[0].value,
       parameters,
       body,
@@ -732,7 +781,7 @@ function parseParameters(tokens: Token[]): ParseFunctionResult {
   }
 
   let result = {
-    ast: { type: "PARAMETERS", identifiers: new Array() },
+    ast: { type: "PARAMETERS", token: tokens[0], identifiers: new Array() },
     rest: tokens.slice(1),
   };
   while (result.rest[0].type === "COMMA") {
@@ -759,6 +808,7 @@ function parseArguments(tokens: Token[]): ParseFunctionResult {
     result = {
       ast: {
         type: "ARGUMENTS" as const,
+        token: tokens[0],
         arguments: [
           ...(result.ast && "arguments" in result.ast
             ? result.ast.arguments

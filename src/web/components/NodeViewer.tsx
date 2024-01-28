@@ -1,18 +1,25 @@
 import { type PropsWithChildren } from "@kitajs/html";
 import { LeafViewer } from "./LeafViewer";
+import type { Ast } from "../../domain/parse";
+import type { TokenWithId } from "../utils";
 
 export function NodeViewer(
   props: PropsWithChildren<{
-    node: { type: string };
+    node: Ast<TokenWithId>;
     class?: string;
   }>
 ) {
-  const { type, ...node } = props.node;
+  const { type, token, ...node } = props.node;
   const children = typeof node === "object" ? Object.entries(node) : null;
 
   return (
     <div class={"p-1 mt-2  text-light text-sm flex flex-col gap-1 w-fit"}>
-      <p class="font-mono text-yellow text-m font-medium">{type}</p>
+      <a
+        class="font-mono text-yellow text-m font-medium hocus:underline"
+        href={`#${token.id}`}
+      >
+        {type}
+      </a>
       {children !== null &&
         children.map(([key, value]) => {
           if (typeof value === "object" && value !== null) {

@@ -2,14 +2,13 @@ import Elysia, { t } from "elysia";
 import { parse } from "../../domain/parse";
 import { tokenize } from "../../domain/tokenize";
 import { App } from "../components/App";
-import { codeCss } from "../utils";
 import { Html } from "@kitajs/html";
 import { CodeViewer } from "../components/CodeViewer";
 import { TokensViewer } from "../components/TokensViewer";
 import { randomUUID } from "crypto";
 import { Link } from "../components/Button";
 import { Nav } from "../components/Nav";
-import { NodeViewer } from "../components/NodeViewer";
+import { ASTViewer } from "./ASTViewer";
 
 export default new Elysia().get(
   "/parsed",
@@ -40,9 +39,7 @@ export default new Elysia().get(
         <Nav title="AST" />
         <CodeViewer source={source} tokens={tokens} />
         <TokensViewer source={source} tokens={tokens} />
-        <div class={codeCss + " overflow-auto grow"}>
-          <NodeViewer node={parsed} />
-        </div>
+        <ASTViewer parsed={parsed} />
       </App>
     );
   },
