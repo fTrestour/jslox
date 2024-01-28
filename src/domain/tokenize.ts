@@ -300,9 +300,11 @@ export function tokenize(code: string, startIndex = 0): Token[] {
           }
           rest = rest.slice(match[0].length);
         }
-      } else {
+      } else if (char.match(/\s/)) {
         newToken = null;
         restIndex += 1;
+      } else {
+        throw new Error("Unexpected character: " + char);
       }
   }
 
