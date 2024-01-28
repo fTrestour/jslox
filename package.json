@@ -2,7 +2,8 @@
   "devDependencies": {
     "@flydotio/dockerfile": "latest",
     "@types/bun": "latest",
-    "@types/node": "^20.11.5"
+    "@types/node": "^20.11.5",
+    "npm-run-all": "^4.1.5"
   },
   "name": "lox-ts",
   "type": "module",
@@ -12,7 +13,8 @@
   "scripts": {
     "exec": "bun run src/cli.ts",
     "build-tailwind": "bun tailwindcss -i ./src/web/input.css -o ./public/output.css --watch",
-    "dev": "bun run --watch src/web/server.tsx",
+    "dev-server": "bun run --watch src/web/server.tsx",
+    "dev": "npm-run-all --parallel build-tailwind dev-server",
     "prestart": "bun tailwindcss -i ./src/web/input.css -o ./public/output.css",
     "start": "bun run src/web/server.tsx",
     "deploy": "fly deploy"
