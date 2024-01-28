@@ -9,7 +9,7 @@ export function TokenViewer(
     <a
       class={
         codeCss +
-        " hocus:border-yellow border-2 border-transparent text-light text-sm flex flex-row gap-4"
+        " hocus:border-yellow focus:outline-none border-2 border-transparent text-light text-sm flex flex-row gap-4"
       }
       href={`#${startIndex}`}
       id={id}

@@ -30,25 +30,25 @@ export function Link(
     class?: string;
   }>
 ) {
-  const test =
+  const aCss =
     props.direction === "backward"
       ? "pr-2 before:right-0 border-r-0"
       : "pl-2 before:left-0 border-l-0";
 
-  const test2 = props.direction === "backward" ? "pl-1" : "pr-1";
+  const spanCss = props.direction === "backward" ? "pl-1" : "pr-1";
   return (
     <a
       href={props.href}
       class={
         props.class +
         " w-fit h-fit p-1 relative before:absolute before:content-[' '] before:top-0 before:h-full before:w-0.5 hocus:before:w-full before:bg-yellow focus:outline-none before:transition-all before:duration-200 group border-yellow border-2 " +
-        test
+        aCss
       }
     >
       <span
         class={
           "relative text-yellow group-hocus:text-background before:transition-all before:duration-200 " +
-          test2
+          spanCss
         }
       >
         {props.children}

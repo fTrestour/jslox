@@ -15,7 +15,7 @@ export function NodeViewer(
   return (
     <div class={"p-1 mt-2  text-light text-sm flex flex-col gap-1 w-fit"}>
       <a
-        class="font-mono text-yellow text-m font-medium hocus:underline"
+        class="font-mono text-yellow text-m font-medium hocus:underline focus:outline-none"
         href={`#${token.id}`}
       >
         {type}
