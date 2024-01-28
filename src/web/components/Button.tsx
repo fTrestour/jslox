@@ -13,10 +13,10 @@ export function Button({
       {...props}
       class={
         _class +
-        " pl-2 before:left-0 w-fit h-fit p-1 relative before:absolute before:content-[' '] before:top-0 before:h-full before:w-0.5 hocus:before:w-full before:bg-yellow focus:outline-none before:transition-all before:duration-200 group border-yellow border-2 border-l-0"
+        " px-4 py-2 before:left-0 w-fit relative before:absolute before:content-[' '] before:top-0 before:h-full before:w-0.5 hocus:before:w-full before:bg-yellow focus:outline-none before:transition-all before:duration-200 group border-yellow border-2 border-l-0 h-12"
       }
     >
-      <span class="relative text-yellow group-hocus:text-background pr-1  before:transition-all before:duration-200">
+      <span class="relative text-yellow group-hocus:text-background">
         {children}
       </span>
     </button>
@@ -32,25 +32,19 @@ export function Link(
 ) {
   const aCss =
     props.direction === "backward"
-      ? "pr-2 before:right-0 border-r-0"
-      : "pl-2 before:left-0 border-l-0";
+      ? "before:right-0 border-r-0"
+      : "before:left-0 border-l-0";
 
-  const spanCss = props.direction === "backward" ? "pl-1" : "pr-1";
   return (
     <a
       href={props.href}
       class={
         props.class +
-        " w-fit h-fit p-1 relative before:absolute before:content-[' '] before:top-0 before:h-full before:w-0.5 hocus:before:w-full before:bg-yellow focus:outline-none before:transition-all before:duration-200 group border-yellow border-2 " +
+        " w-fit h-12 px-4 py-2 flex relative items-center before:absolute before:content-[' '] before:top-0 before:h-full before:w-0.5 hocus:before:w-full before:bg-yellow focus:outline-none before:transition-all before:duration-200 group border-yellow border-2 " +
         aCss
       }
     >
-      <span
-        class={
-          "relative text-yellow group-hocus:text-background before:transition-all before:duration-200 " +
-          spanCss
-        }
-      >
+      <span class={"relative text-yellow group-hocus:text-background"}>
         {props.children}
       </span>
     </a>

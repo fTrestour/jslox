@@ -1,6 +1,5 @@
 import type { PropsWithChildren } from "@kitajs/html";
 import { codeCss, type TokenWithId } from "../utils";
-import { Link } from "./Button";
 
 export function CodeViewer(
   props: PropsWithChildren<{

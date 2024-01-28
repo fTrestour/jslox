@@ -1,6 +1,6 @@
 import type { Token } from "./tokenize";
 
-export function parse(tokens: Token[]) {
+export function parse<T extends Token = Token>(tokens: T[]) {
   const { ast } = parseProgram(tokens);
   return ast!;
 }

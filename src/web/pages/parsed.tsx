@@ -25,8 +25,8 @@ export default new Elysia().get(
     const parsed = parse(tokens);
 
     return (
-      <App class="grid grid-cols-3 gap-6">
-        <Nav title="Source">
+        <App class="grid gap-6 h-auto auto-rows-auto">
+        <Nav title="Source" class="lg:row-start-1">
           <Link
             direction="backward"
             href={`/?source=${encodeURIComponent(source)}`}
@@ -34,12 +34,21 @@ export default new Elysia().get(
             Edit
           </Link>
         </Nav>
+        <CodeViewer
+          source={source}
+          tokens={tokens}
+          class="lg:row-start-2 lg:col-start-1"
+        />
 
-        <Nav title="Tokens" />
-        <Nav title="AST" />
-        <CodeViewer source={source} tokens={tokens} />
-        <TokensViewer source={source} tokens={tokens} />
-        <ASTViewer parsed={parsed} />
+        <Nav title="Tokens" class="lg:row-start-1" />
+        <TokensViewer
+          source={source}
+          tokens={tokens}
+          class="lg:row-start-2 lg:col-start-2"
+        />
+
+        <Nav title="AST" class="lg:row-start-1" />
+        <ASTViewer parsed={parsed} class="lg:row-start-2 lg:col-start-3" />
       </App>
     );
   },

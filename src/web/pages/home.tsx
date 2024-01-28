@@ -24,7 +24,7 @@ sayHello();`;
           action="parsed"
           method="get"
         >
-          <Nav title="Input Code">
+          <Nav title="Source">
             <Button type="submit" direction="forward">
               Parse
             </Button>
