@@ -717,6 +717,7 @@ function parseFunction(tokens: Token[]): ParseFunctionResult {
   return {
     ast: {
       type: "FUNCTION" as const,
+      name: tokens[0].value,
       parameters,
       body,
     },
