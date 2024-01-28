@@ -7,7 +7,7 @@ export function CodeInput(
 ) {
   return (
     <div class={props.class + " flex flex-col overflow-auto"}>
-      <h2 class="text-lg font-semibold mb-4">Input Code</h2>
+      <h2 class="text-lg font-bold mb-4">Input Code</h2>
       <form class="flex-grow flex flex-col" action="tokenized" method="post">
         <textarea
           class={

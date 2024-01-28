@@ -13,7 +13,7 @@ export function TokenViewer(
       }
       id={id}
     >
-      <p class="font-mono text-yellow text-m">{props.source}</p>
+      <p class="font-mono text-yellow text-m font-medium">{props.source}</p>
       <p class="ml-auto">Type: {token.type}</p>|
       <p class="">
         Index range: [{token.startIndex}-{token.endIndex}]

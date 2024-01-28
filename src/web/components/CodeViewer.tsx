@@ -25,7 +25,7 @@ export function CodeViewer(
 
   return (
     <div class={props.class + " flex flex-col"}>
-      <h2 class="text-lg font-semibold mb-4">Input Code</h2>
+      <h2 class="text-lg font-bold mb-4">Input Code</h2>
       <pre class={codeCss + " flex-grow w-full overflow-auto"}>
         {spans.map((span) =>
           span.tokenId !== null ? (
