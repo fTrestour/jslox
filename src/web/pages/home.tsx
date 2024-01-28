@@ -22,7 +22,7 @@ sayHello();`;
         <form
           class="w-full h-full flex flex-col overflow-auto gap-6"
           action="parsed"
-          method="post"
+          method="get"
         >
           <Nav title="Input Code">
             <Button type="submit" direction="forward">

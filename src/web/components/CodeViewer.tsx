@@ -1,5 +1,5 @@
 import type { PropsWithChildren } from "@kitajs/html";
-import { codeCss, type TokenWithId } from "./utils";
+import { codeCss, type TokenWithId } from "../utils";
 import { Link } from "./Button";
 
 export function CodeViewer(
@@ -27,11 +27,12 @@ export function CodeViewer(
     <pre class={codeCss + " flex-grow w-full overflow-auto"}>
       {spans.map((span) =>
         span.tokenId !== null ? (
-          <a href={`#${span.tokenId}`}>
-            <span class="hover:bg-light hover:border-light rounded-md border-4 border-transparent">
-              {span.value}
-            </span>
-          </a>
+          <span
+            class="target:border-yellow hover:border-light rounded-md border-2 p-0.5 border-transparent"
+            id={span.tokenId}
+          >
+            {span.value}
+          </span>
         ) : (
           <span>{span.value}</span>
         )

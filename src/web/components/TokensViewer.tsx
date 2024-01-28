@@ -1,8 +1,7 @@
 import type { PropsWithChildren } from "@kitajs/html";
 
 import { TokenViewer } from "./TokenViewer";
-import type { TokenWithId } from "./utils";
-import { Button } from "./Button";
+import type { TokenWithId } from "../utils";
 
 export function TokensViewer(
   props: PropsWithChildren<{

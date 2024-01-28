@@ -1,4 +1,4 @@
-import type { Token } from "../../domain/tokenize";
+import type { Token } from "../domain/tokenize";
 
 export type TokenWithId = Token & { id: string };
 
