@@ -18,7 +18,9 @@ export function App(props: PropsWithChildren<{ class?: string }>) {
               Tokenize and parse Lox code
             </h2>
           </header>
-          <main class="flex flex-1 gap-8 overflow-clip">{props.children}</main>
+          <main class={props.class + " h-full overflow-clip"}>
+            {props.children}
+          </main>
         </div>
       </body>
     </html>

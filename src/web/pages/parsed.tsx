@@ -7,6 +7,8 @@ import { Html, type PropsWithChildren } from "@kitajs/html";
 import { CodeViewer } from "../components/CodeViewer";
 import { TokensViewer } from "../components/TokensViewer";
 import { randomUUID } from "crypto";
+import { Link } from "../components/Button";
+import { Nav } from "../components/Nav";
 
 export default new Elysia().post(
   "/parsed",
@@ -19,14 +21,22 @@ export default new Elysia().post(
     const parsed = parse(tokens);
 
     return (
-      <App>
-        <CodeViewer class="w-1/3" source={source} tokens={tokens} />
-        <TokensViewer class="w-1/3" source={source} tokens={tokens} />
-        <div class="w-1/3 flex flex-col">
-          <h2 class="text-lg font-bold pb-4">AST</h2>
-          <div class={codeCss + " overflow-auto grow"}>
-            <NodeViewer node={parsed} />
-          </div>
+      <App class="grid grid-cols-3 gap-6">
+        <Nav title="Source">
+          <Link
+            direction="backward"
+            href={`/?source=${encodeURIComponent(source)}`}
+          >
+            Edit
+          </Link>
+        </Nav>
+
+        <Nav title="Tokens" />
+        <Nav title="AST" />
+        <CodeViewer source={source} tokens={tokens} />
+        <TokensViewer source={source} tokens={tokens} />
+        <div class={codeCss + " overflow-auto grow"}>
+          <NodeViewer node={parsed} />
         </div>
       </App>
     );
