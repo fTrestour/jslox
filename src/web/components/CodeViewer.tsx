@@ -8,18 +8,23 @@ export function CodeViewer(
     class?: string;
   }>
 ) {
-  let previousBreakpoint = 0;
   let spans = new Array<{ value: string; id: number | null }>();
-  for (const token of props.tokens) {
-    spans.push({
-      value: props.source.slice(previousBreakpoint, token.startIndex),
-      id: null,
-    });
-    spans.push({
-      value: props.source.slice(token.startIndex, token.endIndex),
-      id: token.startIndex,
-    });
-    previousBreakpoint = token.endIndex;
+
+  if (props.tokens.length === 0) {
+    spans.push({ value: props.source, id: null });
+  } else {
+    let previousBreakpoint = 0;
+    for (const token of props.tokens) {
+      spans.push({
+        value: props.source.slice(previousBreakpoint, token.startIndex),
+        id: null,
+      });
+      spans.push({
+        value: props.source.slice(token.startIndex, token.endIndex),
+        id: token.startIndex,
+      });
+      previousBreakpoint = token.endIndex;
+    }
   }
 
   return (

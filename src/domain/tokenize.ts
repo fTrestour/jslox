@@ -1,4 +1,5 @@
 import { Result, err, ok } from "neverthrow";
+import { LexicalError } from "./errors";
 
 type TokenType =
   | "NUMBER"
@@ -48,7 +49,10 @@ export interface Token {
   endIndex: number;
 }
 
-export function tokenize(code: string, startIndex = 0): Result<Token[], Error> {
+export function tokenize(
+  code: string,
+  startIndex = 0
+): Result<Token[], LexicalError> {
   if (code.length === 0) {
     return ok([{ type: "EOF", value: "", startIndex, endIndex: startIndex }]);
   }
@@ -306,7 +310,9 @@ export function tokenize(code: string, startIndex = 0): Result<Token[], Error> {
         newToken = null;
         restIndex += 1;
       } else {
-        return err(new Error("Unexpected character: " + char));
+        return err(
+          new LexicalError(`Unexpected character "${char}"`, startIndex)
+        );
       }
   }
 

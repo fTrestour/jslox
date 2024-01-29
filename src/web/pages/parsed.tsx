@@ -9,6 +9,7 @@ import { randomUUID } from "crypto";
 import { Link } from "../components/Button";
 import { Nav } from "../components/Nav";
 import { ASTViewer } from "./ASTViewer";
+import type { TokenWithId } from "../utils";
 
 export default new Elysia().get(
   "/parsed",
@@ -17,14 +18,17 @@ export default new Elysia().get(
     // https://stackoverflow.com/a/16587536
     const source = decodeURIComponent(req.query.source.replace(/\+/g, "%20"));
 
-    const tokens = tokenize(source)
-      ._unsafeUnwrap()
-      .map((token) => ({
-        ...token,
-        id: randomUUID(),
-      }));
+    const tokens = tokenize(source).map((tokens) =>
+      tokens.map(
+        (token) =>
+          ({
+            ...token,
+            id: randomUUID(),
+          } as TokenWithId)
+      )
+    );
 
-    const parsed = parse(tokens);
+    const parsed = tokens.map(parse);
 
     return (
       <App class="grid gap-6 h-auto lg:grid-rows-layout lg:grid-cols-3 auto-rows-auto">
@@ -38,7 +42,7 @@ export default new Elysia().get(
         </Nav>
         <CodeViewer
           source={source}
-          tokens={tokens}
+          tokens={tokens.unwrapOr([])}
           class="lg:row-start-2 lg:col-start-1"
         />
 
