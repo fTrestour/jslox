@@ -17,15 +17,17 @@ export default new Elysia().get(
     // https://stackoverflow.com/a/16587536
     const source = decodeURIComponent(req.query.source.replace(/\+/g, "%20"));
 
-    const tokens = tokenize(source).map((token) => ({
-      ...token,
-      id: randomUUID(),
-    }));
+    const tokens = tokenize(source)
+      ._unsafeUnwrap()
+      .map((token) => ({
+        ...token,
+        id: randomUUID(),
+      }));
 
     const parsed = parse(tokens);
 
     return (
-        <App class="grid gap-6 h-auto auto-rows-auto">
+      <App class="grid gap-6 h-auto auto-rows-auto">
         <Nav title="Source" class="lg:row-start-1">
           <Link
             direction="backward"

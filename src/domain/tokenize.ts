@@ -1,3 +1,5 @@
+import { Result, err, ok } from "neverthrow";
+
 type TokenType =
   | "NUMBER"
   | "STRING"
@@ -46,9 +48,9 @@ export interface Token {
   endIndex: number;
 }
 
-export function tokenize(code: string, startIndex = 0): Token[] {
+export function tokenize(code: string, startIndex = 0): Result<Token[], Error> {
   if (code.length === 0) {
-    return [{ type: "EOF", value: "", startIndex, endIndex: startIndex }];
+    return ok([{ type: "EOF", value: "", startIndex, endIndex: startIndex }]);
   }
 
   let restIndex: number = startIndex;
@@ -304,13 +306,13 @@ export function tokenize(code: string, startIndex = 0): Token[] {
         newToken = null;
         restIndex += 1;
       } else {
-        throw new Error("Unexpected character: " + char);
+        return err(new Error("Unexpected character: " + char));
       }
   }
 
   if (newToken === null) {
     return tokenize(rest, restIndex!);
   } else {
-    return [newToken, ...tokenize(rest, restIndex!)];
+    return tokenize(rest, restIndex!).map((tokens) => [newToken!, ...tokens]);
   }
 }
