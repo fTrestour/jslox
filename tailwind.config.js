@@ -17,6 +17,9 @@ export default {
         yellow: "rgb(247, 221, 113)",
         green: "rgb(145, 231, 184)",
       },
+      gridTemplateRows: {
+        layout: "auto 1fr",
+      },
     },
   },
   plugins: [

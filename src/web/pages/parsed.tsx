@@ -27,7 +27,7 @@ export default new Elysia().get(
     const parsed = parse(tokens);
 
     return (
-      <App class="grid gap-6 h-auto auto-rows-auto">
+      <App class="grid gap-6 h-auto lg:grid-rows-layout lg:grid-cols-3 auto-rows-auto">
         <Nav title="Source" class="lg:row-start-1">
           <Link
             direction="backward"
