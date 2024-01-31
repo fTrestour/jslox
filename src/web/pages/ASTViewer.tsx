@@ -4,10 +4,11 @@ import { type PropsWithChildren } from "@kitajs/html";
 import { NodeViewer } from "../components/NodeViewer";
 import type { Result } from "neverthrow";
 import { LexicalError } from "../../domain/errors";
+import type { Program } from "../../domain/ast";
 
 export function ASTViewer(
   props: PropsWithChildren<{
-    parsed: Result<Ast<TokenWithId>, Error>;
+    parsed: Result<Program<TokenWithId>, Error>;
     class?: string;
   }>
 ) {

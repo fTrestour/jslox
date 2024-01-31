@@ -2,10 +2,11 @@ import { type PropsWithChildren } from "@kitajs/html";
 import { LeafViewer } from "./LeafViewer";
 import type { Ast } from "../../domain/parse";
 import type { TokenWithId } from "../utils";
+import { AstNode } from "../../domain/ast";
 
 export function NodeViewer(
   props: PropsWithChildren<{
-    node: Ast<TokenWithId>;
+    node: AstNode<TokenWithId>;
     class?: string;
   }>
 ) {
@@ -22,7 +23,9 @@ export function NodeViewer(
       </a>
       {children !== null &&
         children.map(([key, value]) => {
-          if (typeof value === "object" && value !== null) {
+          if (!(value instanceof AstNode) && !Array.isArray(value)) {
+            return <LeafViewer key={key} value={value} />;
+          } else {
             return (
               <div>
                 <p class="peer hover:text-yellow">{key} :</p>
@@ -38,8 +41,6 @@ export function NodeViewer(
                 </div>
               </div>
             );
-          } else {
-            return <LeafViewer key={key} value={value} />;
           }
         })}
     </div>

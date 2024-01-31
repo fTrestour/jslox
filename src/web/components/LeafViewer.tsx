@@ -7,7 +7,10 @@ export function LeafViewer(
 
   return (
     <p class="peer hover:text-yellow">
-      {props.key} : <span class="text-green">{value}</span>
+      {props.key} :{" "}
+      <span class="text-green">
+        {typeof value === "object" ? value.value : value}
+      </span>
     </p>
   );
 }
