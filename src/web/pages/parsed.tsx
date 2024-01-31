@@ -10,6 +10,7 @@ import { Link } from "../components/Button";
 import { Nav } from "../components/Nav";
 import { ASTViewer } from "./ASTViewer";
 import type { TokenWithId } from "../utils";
+import { Result } from "neverthrow";
 
 export default new Elysia().get(
   "/parsed",
@@ -28,7 +29,12 @@ export default new Elysia().get(
       )
     );
 
-    const parsed = tokens.map(parse);
+    const parsed = tokens.andThen(
+      Result.fromThrowable(
+        parse<TokenWithId>,
+        (err) => new Error("parse error", { cause: err })
+      )
+    );
 
     return (
       <App class="grid gap-6 h-auto lg:grid-rows-layout lg:grid-cols-3 auto-rows-auto">
