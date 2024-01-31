@@ -132,21 +132,16 @@ function parseClassDeclaration<T extends Token>(
     throw new Error("Expected left brace");
   }
 
+  rest = rest.slice(1);
   let functions = new Array<Function<T>>();
   while (rest[0].type !== "RIGHT_BRACE") {
     const { ast: newAst, rest: newRest } = parseFunction(rest);
 
-    if (newAst === null) {
-      throw new Error("Expected function declaration");
+    if (newAst !== null) {
+      functions.push(newAst);
     }
 
-    functions.push(newAst);
     rest = newRest;
-  }
-  rest = rest.slice(1);
-
-  if (rest[0].type !== "SEMICOLON") {
-    throw new Error("Expected semicolon");
   }
   rest = rest.slice(1);
 
@@ -899,7 +894,7 @@ function parseArguments<T extends Token>(
 
   let expression = parseExpression(rest);
   if (expression.ast === null) {
-    throw new Error("Expected expression");
+    return { args, rest };
   }
   args.push(new Argument(tokens[0], expression.ast));
   rest = expression.rest;
