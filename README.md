@@ -1,15 +1,5 @@
 # jslox
 
-To install dependencies:
+A little toy project to test my understanding after having read a bit of [Crafting interpreters](https://craftinginterpreters.com/).
 
-```bash
-bun install
-```
-
-To run:
-
-```bash
-bun exec <file>
-```
-
-This project was created using `bun init` in bun v1.0.23. [Bun](https://bun.sh) is a fast all-in-one JavaScript runtime.
+[This blog post](https://craftinginterpreters.com/) tells a bit more about the project and how I implemented it.
